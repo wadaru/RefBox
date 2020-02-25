@@ -1,0 +1,154 @@
+diff -uprN rcll-refbox.origin/src/libs/config/yaml_node.h rcll-refbox.wataru/src/libs/config/yaml_node.h
+--- rcll-refbox.origin/src/libs/config/yaml_node.h	2020-02-24 09:35:38.539911002 +0100
++++ rcll-refbox.wataru/src/libs/config/yaml_node.h	2020-02-24 09:37:25.070585201 +0100
+@@ -163,7 +163,7 @@ convert(const std::string &input, YAML::
+ 
+ template <typename T>
+ inline bool
+-convert(const std::string &input, T &rhs, typename YAML::enable_if<YAML::is_numeric<T>>::type * = 0)
++convert(const std::string &input, T &rhs, typename YAML::enable_if<YAML::is_numeric<T> >::type * = 0)
+ {
+ 	std::stringstream stream(input);
+ 	stream.unsetf(std::ios::dec);
+diff -uprN rcll-refbox.origin/src/libs/core/threading/thread_list.h rcll-refbox.wataru/src/libs/core/threading/thread_list.h
+--- rcll-refbox.origin/src/libs/core/threading/thread_list.h	2020-02-24 09:35:38.539911002 +0100
++++ rcll-refbox.wataru/src/libs/core/threading/thread_list.h	2020-02-24 09:37:01.758875330 +0100
+@@ -126,8 +126,8 @@ private:
+ 	Mutex *               __finalize_mutex;
+ 	InterruptibleBarrier *__wnw_barrier;
+ 
+-	std::list<std::pair<InterruptibleBarrier *, ThreadList>>           __wnw_bad_barriers;
+-	std::list<std::pair<InterruptibleBarrier *, ThreadList>>::iterator __wnw_bbit;
++	std::list<std::pair<InterruptibleBarrier *, ThreadList> >           __wnw_bad_barriers;
++	std::list<std::pair<InterruptibleBarrier *, ThreadList> >::iterator __wnw_bbit;
+ };
+ 
+ } // end namespace fawkes
+diff -uprN rcll-refbox.origin/src/libs/core/utils/lock_hashmap.h rcll-refbox.wataru/src/libs/core/utils/lock_hashmap.h
+--- rcll-refbox.origin/src/libs/core/utils/lock_hashmap.h	2020-02-24 09:35:38.539911002 +0100
++++ rcll-refbox.wataru/src/libs/core/utils/lock_hashmap.h	2020-02-24 09:38:23.625856423 +0100
+@@ -38,11 +38,11 @@ template <class KeyType,
+           class ValueType,
+ #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 2)
+           class HashFunction = std::tr1::hash<KeyType>,
+-          class EqualKey     = std::equal_to<KeyType>>
++          class EqualKey     = std::equal_to<KeyType> >
+ class LockHashMap : public std::tr1::unordered_map<KeyType, ValueType, HashFunction, EqualKey>
+ #else
+           class HashFunction = __gnu_cxx::hash<KeyType>,
+-          class EqualKey     = std::equal_to<KeyType>>
++          class EqualKey     = std::equal_to<KeyType> >
+ class LockHashMap : public __gnu_cxx::hash_map<KeyType, ValueType, HashFunction, EqualKey>
+ #endif
+ {
+diff -uprN rcll-refbox.origin/src/libs/core/utils/lock_hashset.h rcll-refbox.wataru/src/libs/core/utils/lock_hashset.h
+--- rcll-refbox.origin/src/libs/core/utils/lock_hashset.h	2020-02-24 09:35:38.539911002 +0100
++++ rcll-refbox.wataru/src/libs/core/utils/lock_hashset.h	2020-02-24 09:39:59.680660874 +0100
+@@ -38,11 +38,11 @@ namespace fawkes {
+ template <class KeyType,
+ #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 2)
+           class HashFunction = std::tr1::hash<KeyType>,
+-          class EqualKey     = std::equal_to<KeyType>>
++          class EqualKey     = std::equal_to<KeyType> >
+ class LockHashSet : public std::tr1::unordered_set<KeyType, HashFunction, EqualKey>
+ #else
+           class HashFunction = __gnu_cxx::hash<KeyType>,
+-          class EqualKey     = std::equal_to<KeyType>>
++          class EqualKey     = std::equal_to<KeyType> >
+ class LockHashSet : public __gnu_cxx::hash_set<KeyType, HashFunction, EqualKey>
+ #endif
+ {
+diff -uprN rcll-refbox.origin/src/libs/core/utils/lock_map.h rcll-refbox.wataru/src/libs/core/utils/lock_map.h
+--- rcll-refbox.origin/src/libs/core/utils/lock_map.h	2020-02-24 09:35:38.539911002 +0100
++++ rcll-refbox.wataru/src/libs/core/utils/lock_map.h	2020-02-24 09:38:44.241599834 +0100
+@@ -31,7 +31,7 @@
+ 
+ namespace fawkes {
+ 
+-template <typename KeyType, typename ValueType, typename LessKey = std::less<KeyType>>
++template <typename KeyType, typename ValueType, typename LessKey = std::less<KeyType> >
+ class LockMap : public std::map<KeyType, ValueType, LessKey>
+ {
+ public:
+diff -uprN rcll-refbox.origin/src/libs/mps_comm/Makefile rcll-refbox.wataru/src/libs/mps_comm/Makefile
+--- rcll-refbox.origin/src/libs/mps_comm/Makefile	2020-02-24 09:35:38.543910953 +0100
++++ rcll-refbox.wataru/src/libs/mps_comm/Makefile	2020-02-24 09:41:29.359545460 +0100
+@@ -39,6 +39,7 @@ endif
+ 
+ OBJS_all = $(OBJS_libmps_comm)
+ LIBS_all = $(LIBDIR)/libmps_comm.so
++CFLAGS += -std=c++14
+ 
+ ifeq ($(OBJSSUBMAKE),1)
+ all: $(WARN_TARGETS)
+diff -uprN rcll-refbox.origin/src/libs/netcomm/dns-sd/avahi_thread.cpp rcll-refbox.wataru/src/libs/netcomm/dns-sd/avahi_thread.cpp
+--- rcll-refbox.origin/src/libs/netcomm/dns-sd/avahi_thread.cpp	2020-02-24 09:35:38.543910953 +0100
++++ rcll-refbox.wataru/src/libs/netcomm/dns-sd/avahi_thread.cpp	2020-02-24 09:39:37.340938931 +0100
+@@ -520,7 +520,7 @@ AvahiThread::create_browser(const char *
+ void
+ AvahiThread::recreate_browsers()
+ {
+-	LockMap<std::string, std::list<ServiceBrowseHandler *>>::iterator i;
++	LockMap<std::string, std::list<ServiceBrowseHandler *> >::iterator i;
+ 	for (i = __handlers.begin(); i != __handlers.end(); ++i) {
+ 		create_browser((*i).first.c_str());
+ 	}
+diff -uprN rcll-refbox.origin/src/libs/netcomm/dns-sd/avahi_thread.h rcll-refbox.wataru/src/libs/netcomm/dns-sd/avahi_thread.h
+--- rcll-refbox.origin/src/libs/netcomm/dns-sd/avahi_thread.h	2020-02-24 09:35:38.543910953 +0100
++++ rcll-refbox.wataru/src/libs/netcomm/dns-sd/avahi_thread.h	2020-02-24 09:39:17.421186866 +0100
+@@ -192,7 +192,7 @@ private:
+ 	LockQueue<NetworkService>                            __pending_services;
+ 	LockQueue<NetworkService>                            __pending_remove_services;
+ 
+-	LockMap<std::string, std::list<ServiceBrowseHandler *>> __handlers;
++	LockMap<std::string, std::list<ServiceBrowseHandler *> > __handlers;
+ 	LockMap<std::string, AvahiServiceBrowser *>             __browsers;
+ 	LockQueue<std::string>                                  __pending_browsers;
+ 	LockQueue<std::string>                                  __pending_browser_removes;
+diff -uprN rcll-refbox.origin/src/libs/netcomm/utils/resolver.h rcll-refbox.wataru/src/libs/netcomm/utils/resolver.h
+--- rcll-refbox.origin/src/libs/netcomm/utils/resolver.h	2020-02-24 09:35:38.543910953 +0100
++++ rcll-refbox.wataru/src/libs/netcomm/utils/resolver.h	2020-02-24 09:39:01.393386356 +0100
+@@ -74,7 +74,7 @@ private:
+ 	HostInfo *                 __host_info;
+ 	unsigned int               __cache_timeout;
+ 
+-	LockHashMap<uint32_t, std::pair<char *, time_t>> addr2name_cache;
++	LockHashMap<uint32_t, std::pair<char *, time_t> > addr2name_cache;
+ 	LockHashMap<char *,
+ 	            std::pair<struct sockaddr *, time_t>,
+ #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 2)
+@@ -85,7 +85,7 @@ private:
+ 	            StringEquality>
+ 	  name2addr_cache;
+ 
+-	LockHashMap<uint32_t, std::pair<char *, time_t>>::iterator a2ncit;
++	LockHashMap<uint32_t, std::pair<char *, time_t> >::iterator a2ncit;
+ 	LockHashMap<char *,
+ 	            std::pair<struct sockaddr *, time_t>,
+ #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 2)
+diff -uprN rcll-refbox.origin/src/libs/netcomm/utils/resolver_thread.h rcll-refbox.wataru/src/libs/netcomm/utils/resolver_thread.h
+--- rcll-refbox.origin/src/libs/netcomm/utils/resolver_thread.h	2020-02-24 09:35:38.543910953 +0100
++++ rcll-refbox.wataru/src/libs/netcomm/utils/resolver_thread.h	2020-02-24 09:40:17.096444101 +0100
+@@ -98,7 +98,7 @@ private:
+ 
+ 	Mutex *                                                             __addrq_mutex;
+ 	unsigned int                                                        __addrq_active;
+-	typedef std::map<uint32_t, std::pair<struct sockaddr *, socklen_t>> AddrQMap;
++	typedef std::map<uint32_t, std::pair<struct sockaddr *, socklen_t> > AddrQMap;
+ 	AddrQMap                                                            __addrqs[2];
+ 	AddrQMap *                                                          __addrq;
+ 	AddrQMap *                                                          __addrq_proc;
+diff -uprN rcll-refbox.origin/src/msgs/MachineInstructions.proto rcll-refbox.wataru/src/msgs/MachineInstructions.proto
+--- rcll-refbox.origin/src/msgs/MachineInstructions.proto	2020-02-24 09:35:38.547910903 +0100
++++ rcll-refbox.wataru/src/msgs/MachineInstructions.proto	2020-02-24 09:36:25.847322263 +0100
+@@ -56,8 +56,8 @@ message PrepareInstructionBS {
+ }
+ 
+ message PrepareInstructionDS {
+-  reserved "gate";
+-  reserved 1;
++//  reserved "gate";
++//  reserved 1;
+   required uint32 order_id = 2;
+ }
+ 
